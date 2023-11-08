@@ -1,25 +1,21 @@
-import Express , {Router, json} from "express";
+import Express, { json } from "express";
 import dotenv from "dotenv";
 dotenv.config();
-const{API_URL} = process.env;
+
+const { API_URL } = process.env;
 const app = Express();
-const router = Router();
 
-app.use(
-   router.get("/", function (req, res){
-      return res.send("Hello from rest-api v2");
-   }),
-router.post("/post-request/:id", (req, res) => {
-   const body = req.body;
-   const params = req.params;
-   const queryParams = req.query;
-   res
-     .status(200)
-     .json({ Body: body, Params: params, "Query params": queryParams});
-   }),
-);
+//routers
+import userRouter from "./src/modules/user/user.route.js";
 
-app.listen(3000, function() {
-	console.log("API_URL");
-	console.log("Server is running at port 3000");
+app
+  .use(json())
+  .use(`${API_URL}users`, userRouter) //localhost:3000api/v1/users
+  .use("*", (req, res) => {
+    return res.status(404).send("Not Found...");
+  });
+
+app.listen(3000, function () {
+  console.log(API_URL);
+  console.log("Server is running at port 3000");
 });
